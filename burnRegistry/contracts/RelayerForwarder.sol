@@ -36,10 +36,11 @@ contract RelayerForwarder is Ownable {
         bytes memory _encodedPayload
     ) internal returns (uint256 fee, uint256 burn) {
         // feePlusBurn calculated by the increase in balance of this contract
-        uint256 prevBalance = address(this).balance;
+        address payable self = address(this);
+        uint256 prevBalance = address(self).balance;
         (bool success,) = _applicationContract.call(_encodedPayload);
         require(success, "RelayerForwarder: failure calling application contract");
-        uint256 finalBalance = address(this).balance;
+        uint256 finalBalance = address(self).balance;
 
         if (finalBalance > prevBalance) {
             uint256 feePlusBurn = finalBalance.sub(prevBalance);
